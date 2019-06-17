@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, Modal, TouchableWithoutFeedback, Image,Clipboard} from 'react-native';
+import {Platform, StyleSheet, Text, View, Modal, TouchableWithoutFeedback, Image,Clipboard,Linking} from 'react-native';
 import {size} from "../utils/px"
-
+import * as WeChat from 'react-native-wechat'
 export default class shareView extends Component {
     constructor(props) {
         super(props);
@@ -11,6 +11,7 @@ export default class shareView extends Component {
             link:""
         };
         this.list = this.renderTypes(this.props.types)
+        WeChat.registerApp('wx3e75b08e7f71662c');
     }
 
     render() {
@@ -50,11 +51,26 @@ export default class shareView extends Component {
     }
 
     weiFriend() {
-alert(1)
+        Linking.canOpenURL('mqq://').then(supported => { // weixin://  alipay://
+            if (supported) {
+                return Linking.openURL('mqq://');
+            } else {
+            }
+        });
     }
 
     weiPyq() {
-        alert(2)
+        WeChat.isWXAppInstalled()
+            .then((isInstalled) => {
+                if (isInstalled) {
+                    WeChat.shareToSession({type: 'text', description: '测试'})
+                        .catch((error) => {
+                            Alert.alert(error.message);
+                        });
+                } else {
+                    Alert.alert('请安装微信');
+                }
+            });
     }
 
     weiLink() {
